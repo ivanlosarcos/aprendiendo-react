@@ -59,7 +59,7 @@ function App() {
 
   const updateBoard = (index) => {
 
-    if (board[index]) return // si ya existe, no hacemos cambio
+    if (board[index] || winner) return // si ya existe ficha o tenemos ganador, no hacemos cambio
 
     // actualizar el tablero
     const newBoard = [...board]
@@ -69,6 +69,12 @@ function App() {
     // actualizar el turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
+
+    // checkeamos si hay ganador
+    const newWinner = checkWinner(newBoard)
+    if (newWinner) {
+      setWinner(newWinner)
+    } // TODO:  check if game is over
   }
 
   return (
@@ -95,6 +101,31 @@ function App() {
         <Square isSelected = {turn === TURNS.X}> {TURNS.X} </Square>
         <Square isSelected = {turn === TURNS.O}> {TURNS.O} </Square>
       </section>
+
+      {
+        winner !== null && (
+          <section className='winner'>
+            <div className='text'>
+              <h2>
+                {
+                  winner === false
+                    ? 'Empate'
+                    : 'Ganó ' + winner
+                }
+              </h2>  
+
+              <header className='win'>
+                {winner && <Square>{winner}</Square>}
+              </header>
+
+              <footer>
+                <button>Empezar de nuevo</button>
+              </footer>
+              
+            </div>
+          </section>
+        )
+      }
     </main>
 
     
