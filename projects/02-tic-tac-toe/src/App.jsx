@@ -1,35 +1,9 @@
 import { useState } from 'react'
 import './App.css'
+import { Square } from './components/Square'
+import { TURNS, WINNER_COMBOS } from './constants'
+import confetti from 'canvas-confetti'
 
-const TURNS = {
-  X: "x",
-  O: "o"
-}
-
-const Square = ({children, isSelected, updateBoard, index}) => {
-  const className = `square ${isSelected ? 'is-selected' : ''}`
-
-  const handleClick = () => {
-    updateBoard(index)
-  }
-
-  return (
-    <div onClick={handleClick} className = {className}>
-      {children}
-    </div>
-  )
-}
-
-const WINNER_COMBOS = [
-  [0, 1, 2],
-  [3, 4, 5],
-  [6, 7, 8],
-  [0, 3, 6],
-  [1, 4, 7],
-  [2, 5, 8],
-  [0, 4, 8],
-  [2, 4, 6]
-]
 
 function App() {
 
@@ -57,6 +31,16 @@ function App() {
     return null
   }
 
+  const resetGame = () => {
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
+  }
+
+  const checkEndGame = (newBoard) => {
+    return newBoard.every(square => square!== null)
+  }
+
   const updateBoard = (index) => {
 
     if (board[index] || winner) return // si ya existe ficha o tenemos ganador, no hacemos cambio
@@ -74,7 +58,10 @@ function App() {
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
       setWinner(newWinner)
-    } // TODO:  check if game is over
+      confetti()
+    } else if (checkEndGame(newBoard)){
+      setWinner(false) //empate
+    }
   }
 
   return (
@@ -119,7 +106,7 @@ function App() {
               </header>
 
               <footer>
-                <button>Empezar de nuevo</button>
+                <button onClick={resetGame}>Empezar de nuevo</button>
               </footer>
               
             </div>
